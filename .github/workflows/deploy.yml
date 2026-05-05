@@ -23,10 +23,10 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         env:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           pip install awsebcli
-          echo "" | eb init nodejsapp --region us-east-1 --platform "Node.js"          
+          eb init -p "Node.js" nodejsapp --region us-east-1 --interactive false
           eb use nodejs-env
           eb deploy
