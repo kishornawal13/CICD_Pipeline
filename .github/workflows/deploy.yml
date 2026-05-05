@@ -23,6 +23,15 @@ jobs:
       - name: Create ZIP package
         run: zip -r app.zip . -x "*.git*" "node_modules/*"
 
+      - name: Check if secrets exist
+        run: |
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
+            echo "AWS_ACCESS_KEY_ID is EMPTY ❌"
+            exit 1
+          else
+            echo "AWS_ACCESS_KEY_ID is set ✅"
+          fi
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
