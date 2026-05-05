@@ -1,3 +1,5 @@
+name: Deploy to Elastic Beanstalk
+
 on:
   push:
     branches: [ main ]
@@ -8,25 +10,26 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Install dependencies
         run: npm install --production
 
-      - name: Zip app
-        run: zip -r app.zip .
+      - name: Create ZIP package
+        run: zip -r app.zip . -x "*.git*" "node_modules/*"
 
       - name: Deploy to Elastic Beanstalk
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          pip install awsebcli
-          eb init -p "Node.js" nodejsapp --region us-east-1
-          eb use nodejs-env
-          eb deploy          
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          application_name: MySampleApp          # EXACT EB app name
+          environment_name: MySampleApp-env      # EXACT EB env name
+          version_label: v-${{ github.run_number }}
+          region: us-east-1
+          deployment_package: app.zip
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
