@@ -27,6 +27,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           pip install awsebcli
-          eb init nodejsapp --region us-east-1 --platform "Node.js"
+          echo "" | eb init nodejsapp --region us-east-1 --platform "Node.js"          
           eb use nodejs-env
           eb deploy
